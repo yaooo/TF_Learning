@@ -8,8 +8,7 @@ from tensorflow.keras.callbacks import TensorBoard
 import pickle
 import time
 
-NAME = "Cats-vs-Dogs-cnn-64x2-{}".format(int(time.time()))
-tensorborad = TensorBoard(log_dir='logs/{}'.format(NAME))
+# NAME = "Cats-vs-Dogs-cnn-64x2-{}".format(int(time.time()))
 
 
 gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction = 0.333)
@@ -24,29 +23,47 @@ y = pickle.load(pickle_in)
 
 X = X/255.0
 
-model = Sequential()
 
-model.add(Conv2D(64, (3, 3), input_shape=X.shape[1:]))
-model.add(Activation('relu'))
-model.add(MaxPooling2D(pool_size=(2, 2)))
+import time
 
-model.add(Conv2D(64, (3, 3)))
-model.add(Activation('relu'))
-model.add(MaxPooling2D(pool_size=(2, 2)))
+dense_layers = [0,1,2]
+layer_sizes = [32,64,128]
+conv_layers = [1,2,3]
 
-model.add(Flatten())  # this converts our 3D feature maps to 1D feature vectors
+for dense_layer in dense_layers:
+	for layer_size in layer_sizes:
+		for conv_layer in conv_layers:
+			NAME = "{}-cov-{}-nodes-{}-dense-{}".format(conv_layer, layer_size, dense_layer, int(time.time()))
+			print(NAME)
+			tensorborad = TensorBoard(log_dir='logs/{}'.format(NAME))
 
-# model.add(Dense(64))
-# model.add(Activation('relu'))
+			model = Sequential()
 
-model.add(Dense(1))
-model.add(Activation('sigmoid'))
+			model.add(Conv2D(64, (3, 3), input_shape=X.shape[1:]))
+			model.add(Activation('relu'))
+			model.add(MaxPooling2D(pool_size=(2, 2)))
 
-model.compile(loss='binary_crossentropy',
-              optimizer='adam',
-              metrics=['accuracy'])
+			for l in range(conv_layer-1):
+				model.add(Conv2D(64, (3, 3)))
+				model.add(Activation('relu'))
+				model.add(MaxPooling2D(pool_size=(2, 2)))
 
-model.fit(X, y, batch_size=32, epochs=10, validation_split=0.3, callbacks=[tensorborad])
+			model.add(Flatten())  # this converts our 3D feature maps to 1D feature vectors
+
+			for l in range(dense_layer):
+				model.add(Dense(layer_size))
+				mode.add(Activation('relu'))
+			# model.add(Dense(64))
+			# model.add(Activation('relu'))
+
+			model.add(Dense(1))
+			model.add(Activation('sigmoid'))
+
+			model.compile(loss='binary_crossentropy',
+			              optimizer='adam',
+			              metrics=['accuracy'])
+
+			model.fit(X, y, batch_size=32, epochs=10, validation_split=0.3, callbacks=[tensorborad])
 
 ##########################################################################################
 # Command for calling tensorboard: 
