@@ -10,6 +10,10 @@ import time
 
 # NAME = "Cats-vs-Dogs-cnn-64x2-{}".format(int(time.time()))
 
+##########################################################################################
+# Learn to make changes on the models based on tensorboard
+##########################################################################################
+#
 
 gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction = 0.333)
 sess = tf.Session(config = tf.ConfigProto(gpu_options=gpu_options))
@@ -67,5 +71,5 @@ for dense_layer in dense_layers:
 
 ##########################################################################################
 # Command for calling tensorboard: 
-#tensorboard --logdir=data/ --host localhost --port 8088
+#tensorboard --logdir=logs/ --host localhost --port 8088
 ##########################################################################################
