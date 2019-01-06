@@ -15,7 +15,7 @@ gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction = 0.333)
 sess = tf.Session(config = tf.ConfigProto(gpu_options=gpu_options))
 
 
-pickle_in = open("X.pickle","rb")
+pickle_in = open("x.pickle","rb")
 X = pickle.load(pickle_in)
 
 pickle_in = open("y.pickle","rb")
